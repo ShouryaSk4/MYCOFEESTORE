@@ -1,2 +1,3 @@
 fastapi==0.111.0
+setuptools
 razorpay==1.4.1
