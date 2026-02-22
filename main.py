@@ -14,8 +14,9 @@ import hmac
 import os
 from datetime import datetime
 from contextlib import asynccontextmanager
+import httpx
+import base64
 
-import razorpay
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -30,7 +31,7 @@ KEY_ID     = os.getenv("RAZORPAY_KEY_ID", "")
 KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 DB_PATH    = os.getenv("DB_PATH", "orders.db")
 
-rzp_client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
+
 
 # ─── DB Setup ──────────────────────────────────────────────
 def get_db():
@@ -179,43 +180,77 @@ def create_order(req: CreateOrderRequest):
     }
 
 
-@app.post("/api/verify-payment")
-def verify_payment(req: VerifyPaymentRequest):
+@app.post("/api/create-order")
+async def create_order(req: CreateOrderRequest):
     """
-    Step 4 — Verify Razorpay signature using HMAC SHA256.
-    Only marks order as 'paid' if signature is valid.
+    Step 1 — Create a Razorpay order server-side.
+    Returns order_id that the frontend passes to Razorpay Checkout.
     """
-    # Build the string Razorpay signs
-    payload = f"{req.razorpay_order_id}|{req.razorpay_payment_id}"
+    if not KEY_ID or not KEY_SECRET:
+        raise HTTPException(500, "Razorpay credentials missing in environment variables")
+    if req.qty < 1 or req.qty > 20:
+        raise HTTPException(400, "Quantity must be between 1 and 20")
+    if req.amount_paise <= 0:
+        raise HTTPException(400, "Invalid amount")
 
-    expected_sig = hmac.new(
-        KEY_SECRET.encode("utf-8"),
-        payload.encode("utf-8"),
-        hashlib.sha256
-    ).hexdigest()
+    # Create order via Razorpay Orders API (direct HTTP, no razorpay package)
+    credentials = base64.b64encode(f"{KEY_ID}:{KEY_SECRET}".encode()).decode()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.razorpay.com/v1/orders",
+                headers={
+                    "Authorization": f"Basic {credentials}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "amount":   req.amount_paise,
+                    "currency": "INR",
+                    "receipt":  f"5am_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                    "notes": {
+                        "product":  req.product,
+                        "qty":      str(req.qty),
+                        "customer": req.customer_name,
+                    }
+                }
+            )
+        if response.status_code != 200:
+            raise HTTPException(502, f"Razorpay error: {response.text}")
+        rzp_order = response.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(502, f"Razorpay order creation failed: {str(e)}")
 
-    if not hmac.compare_digest(expected_sig, req.razorpay_signature):
-        # Signature mismatch — possible tampering
-        print(f"⚠️  Signature MISMATCH for order {req.razorpay_order_id}")
-        raise HTTPException(400, "Payment verification failed — invalid signature")
+    rzp_order_id = rzp_order["id"]
 
-    # Signature valid → update DB
-    now = datetime.now().isoformat()
+    # Persist to SQLite with status = 'created'
     with get_db() as conn:
         conn.execute("""
-            UPDATE orders SET
-                razorpay_payment_id = ?,
-                razorpay_signature  = ?,
-                status              = 'paid',
-                verified_at         = ?
-            WHERE razorpay_order_id = ?
-        """, (req.razorpay_payment_id, req.razorpay_signature, now, req.razorpay_order_id))
+            INSERT INTO orders
+              (razorpay_order_id, product, qty, amount_paise,
+               customer_name, customer_email, customer_phone, delivery_address)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            rzp_order_id,
+            req.product,
+            req.qty,
+            req.amount_paise,
+            req.customer_name,
+            req.customer_email,
+            req.customer_phone,
+            req.delivery_address,
+        ))
         conn.commit()
 
-    print(f"✅  Payment VERIFIED: {req.razorpay_payment_id} for order {req.razorpay_order_id}")
+    print(f"📦  Order created: {rzp_order_id} | {req.product} ×{req.qty} | ₹{req.amount_paise//100}")
 
-    return {"status": "verified", "payment_id": req.razorpay_payment_id}
-
+    return {
+        "order_id":     rzp_order_id,
+        "amount_paise": req.amount_paise,
+        "currency":     "INR",
+        "key_id":       KEY_ID,
+    }
 
 @app.get("/api/orders")
 def list_orders(limit: int = 50):
