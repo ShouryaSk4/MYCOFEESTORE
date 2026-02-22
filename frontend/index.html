@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5 A.M. Assembly — Grinding Culture. Brewing Momentum.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+  :root {
+    --black: #0D0D0F; --espresso: #2A1E17; --cream: #F4EDE3;
+    --copper: #B45309; --blue: #1F3C88; --red: #8B1A1A;
+    --gray: #3A3A3C;   --muted: #6B6B6E;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--cream);font-family:'Barlow',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
+
+  /* CURSOR */
+  .cursor{position:fixed;width:8px;height:8px;background:var(--copper);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+  .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(180,83,9,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .08s,top .08s}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:28px 60px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(13,13,15,.97) 0%,transparent 100%)}
+  .nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:var(--cream);text-decoration:none}
+  .nav-logo span{color:var(--copper)}
+  .nav-links{display:flex;gap:48px;list-style:none}
+  .nav-links a{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+  .nav-links a:hover{color:var(--copper)}
+  .nav-cta{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--black);background:var(--copper);padding:10px 24px;text-decoration:none;transition:background .3s;cursor:none}
+  .nav-cta:hover{background:var(--cream)}
+
+  /* HERO */
+  #hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;overflow:hidden}
+  .hero-canvas{position:absolute;inset:0;z-index:0;width:100%;height:100%}
+  .hero-content{position:relative;z-index:2;padding:0 60px;max-width:900px}
+  .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--copper);margin-bottom:32px;opacity:0;animation:fadeUp .8s ease .3s forwards}
+  .hero-headline{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(72px,10vw,140px);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;color:var(--cream);margin-bottom:40px;opacity:0;animation:fadeUp .8s ease .5s forwards}
+  .hero-headline .dim{color:transparent;-webkit-text-stroke:1px rgba(244,237,227,.3)}
+  .hero-sub{font-size:16px;font-weight:300;color:rgba(244,237,227,.5);letter-spacing:.05em;line-height:1.7;max-width:460px;margin-bottom:56px;opacity:0;animation:fadeUp .8s ease .7s forwards}
+  .hero-btns{display:flex;align-items:center;gap:36px;opacity:0;animation:fadeUp .8s ease .9s forwards}
+  .btn-copper{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--black);background:var(--copper);padding:18px 48px;text-decoration:none;display:inline-block;cursor:none;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:background .3s,transform .2s}
+  .btn-copper:hover{background:var(--cream);transform:translateY(-2px)}
+  .btn-ghost{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:12px;transition:color .3s}
+  .btn-ghost::after{content:'→';transition:transform .3s}
+  .btn-ghost:hover{color:var(--cream)}
+  .btn-ghost:hover::after{transform:translateX(6px)}
+  .hero-clock{position:absolute;bottom:48px;right:60px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;z-index:2}
+  .hero-scroll{position:absolute;bottom:48px;left:60px;display:flex;align-items:center;gap:16px;z-index:2;opacity:0;animation:fadeIn 1s ease 1.5s forwards}
+  .scroll-line{width:48px;height:1px;background:var(--copper);position:relative;overflow:hidden}
+  .scroll-line::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--cream);animation:slide 2s ease infinite}
+  @keyframes slide{0%{left:-100%}100%{left:100%}}
+  .hero-scroll span{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+
+  /* SECTIONS */
+  section{padding:120px 60px}
+  .sec-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--copper);margin-bottom:24px}
+  .sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,6vw,88px);line-height:.95;text-transform:uppercase;letter-spacing:-.01em}
+
+  /* MANIFESTO */
+  #manifesto{background:var(--espresso);padding:100px 60px;position:relative;overflow:hidden}
+  #manifesto::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--copper),transparent)}
+  .man-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .man-text{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(36px,4vw,64px);line-height:1.05;text-transform:uppercase;letter-spacing:-.01em;color:var(--cream)}
+  .man-text .dim{color:rgba(244,237,227,.2)}
+  .man-text .acc{color:var(--copper)}
+  .man-items{display:flex;flex-direction:column}
+  .man-item{padding:28px 0;border-bottom:1px solid rgba(244,237,227,.08);display:flex;gap:24px}
+  .man-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--copper);letter-spacing:.2em;padding-top:3px;min-width:32px}
+  .man-stmt{font-size:15px;line-height:1.6;color:rgba(244,237,227,.7);font-weight:300}
+  .man-stmt strong{color:var(--cream);font-weight:500}
+
+  /* PRODUCTS */
+  #products{background:var(--black)}
+  .prod-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:72px}
+  .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px}
+
+  .pcard{background:var(--espresso);padding:48px;position:relative;overflow:hidden;display:flex;flex-direction:column;transition:transform .4s;cursor:none}
+  .pcard::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--copper);transition:height .4s}
+  .pcard:hover::before{height:100%}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard:nth-child(2){background:#1A1412}
+  .pcard:nth-child(3){background:#131820}
+
+  .p-badge{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--copper);border:1px solid rgba(180,83,9,.3);padding:5px 12px;display:inline-block;margin-bottom:28px;align-self:flex-start}
+  .p-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;line-height:.95;text-transform:uppercase;letter-spacing:-.01em;color:var(--cream);margin-bottom:8px}
+  .p-sub{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+  .p-desc{font-size:14px;line-height:1.7;color:rgba(244,237,227,.5);font-weight:300;margin-bottom:28px;flex:1}
+  .p-energy{margin-bottom:24px}
+  .e-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .e-bar{height:2px;background:rgba(244,237,227,.08)}
+  .e-fill{height:100%;background:linear-gradient(to right,var(--copper),var(--red))}
+  .p-meta{display:flex;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+  .m-item{display:flex;flex-direction:column;gap:4px}
+  .m-key{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .m-val{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream)}
+  .p-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;border-top:1px solid rgba(244,237,227,.07)}
+  .p-price-block{display:flex;flex-direction:column}
+  .p-price{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:38px;color:var(--cream);letter-spacing:-.02em;line-height:1}
+  .p-weight{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+  .p-add{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--copper);background:none;border:1px solid rgba(180,83,9,.4);padding:12px 18px;cursor:none;transition:all .3s;white-space:nowrap}
+  .p-add:hover{background:var(--copper);color:var(--black);border-color:var(--copper)}
+
+  /* STATS */
+  #stats{background:var(--copper);padding:56px 60px}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .stat-item{padding:0 40px;border-right:1px solid rgba(13,13,15,.2)}
+  .stat-item:first-child{padding-left:0}
+  .stat-item:last-child{border-right:none}
+  .stat-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:72px;line-height:1;color:var(--black);letter-spacing:-.03em}
+  .stat-lbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(13,13,15,.6);margin-top:4px}
+
+  /* DARK ENERGY */
+  #dark-energy{background:var(--black);padding:0;position:relative;overflow:hidden;height:600px;display:flex;align-items:center}
+  .de-canvas{position:absolute;inset:0;width:100%;height:100%}
+  .de-content{position:relative;z-index:2;padding:0 60px;max-width:600px}
+  .de-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:rgba(139,26,26,.8);margin-bottom:24px}
+  .de-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(56px,7vw,100px);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;color:var(--cream);margin-bottom:32px}
+  .de-body{font-size:15px;line-height:1.8;color:rgba(244,237,227,.45);font-weight:300;max-width:420px}
+
+  /* PHILOSOPHY */
+  #philosophy{background:var(--espresso);padding:120px 60px;position:relative}
+  #philosophy::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(180,83,9,.4),transparent)}
+  .phil-inner{max-width:760px;margin:0 auto;text-align:center}
+  .phil-quote{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(32px,4vw,56px);line-height:1.15;text-transform:uppercase;letter-spacing:-.01em;color:var(--cream);margin-bottom:48px}
+  .phil-quote em{font-style:normal;color:var(--copper)}
+  .phil-body{font-size:16px;line-height:1.9;color:rgba(244,237,227,.45);font-weight:300;margin-bottom:56px}
+  .phil-line{width:64px;height:1px;background:var(--copper);margin:0 auto}
+
+  /* ASSEMBLY */
+  #assembly{background:var(--black);padding:120px 60px}
+  .asm-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .asm-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,6vw,84px);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;margin-bottom:24px}
+  .asm-body{font-size:15px;line-height:1.8;color:rgba(244,237,227,.45);font-weight:300;margin-bottom:48px}
+  .email-form{display:flex}
+  .email-in{flex:1;background:rgba(244,237,227,.04);border:1px solid rgba(244,237,227,.12);border-right:none;padding:16px 24px;font-family:'Space Mono',monospace;font-size:12px;color:var(--cream);letter-spacing:.1em;outline:none;transition:border-color .3s}
+  .email-in::placeholder{color:var(--muted)}
+  .email-in:focus{border-color:var(--copper)}
+  .email-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;background:var(--copper);color:var(--black);border:none;padding:16px 36px;cursor:none;transition:background .3s}
+  .email-btn:hover{background:var(--cream)}
+  .asm-perks{display:flex;flex-direction:column;gap:24px}
+  .perk{display:flex;align-items:flex-start;gap:20px;padding:28px;border:1px solid rgba(244,237,227,.06);transition:border-color .3s}
+  .perk:hover{border-color:rgba(180,83,9,.3)}
+  .perk-icon{font-family:'Space Mono',monospace;font-size:18px;color:var(--copper);min-width:32px;padding-top:2px}
+  .perk-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.05em;color:var(--cream);margin-bottom:6px}
+  .perk-desc{font-size:13px;line-height:1.6;color:rgba(244,237,227,.4);font-weight:300}
+
+  /* FOOTER */
+  footer{background:var(--espresso);padding:72px 60px 40px}
+  .ft-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid rgba(244,237,227,.08)}
+  .ft-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;letter-spacing:.1em;color:var(--cream);margin-bottom:16px}
+  .ft-logo span{color:var(--copper)}
+  .ft-tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);line-height:1.7}
+  .ft-col-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--copper);margin-bottom:20px}
+  .ft-links{list-style:none;display:flex;flex-direction:column;gap:12px}
+  .ft-links a{font-size:14px;color:rgba(244,237,227,.4);text-decoration:none;font-weight:300;transition:color .3s}
+  .ft-links a:hover{color:var(--cream)}
+  .ft-bottom{display:flex;justify-content:space-between;align-items:center}
+  .ft-copy{font-family:'Space Mono',monospace;font-size:10px;color:rgba(244,237,227,.2);letter-spacing:.15em;text-transform:uppercase}
+  .ft-signal{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .sig-dot{width:6px;height:6px;background:var(--copper);border-radius:50%;animation:pulse 2s ease infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* ANIMATIONS */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s,transform .7s}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:32px;right:32px;background:var(--copper);color:var(--black);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:14px 24px;z-index:9000;transform:translateY(100px);opacity:0;transition:all .4s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.err{background:var(--red)}
+
+  /* ═══════════════ ORDER PAGE ═══════════════ */
+  #order-page{display:none;position:fixed;inset:0;z-index:500;background:var(--black);overflow-y:auto}
+  #order-page.active{display:block}
+
+  .o-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 60px;border-bottom:1px solid rgba(244,237,227,.06);position:sticky;top:0;z-index:10;background:rgba(13,13,15,.97);backdrop-filter:blur(12px)}
+  .o-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:.15em;text-transform:uppercase;color:var(--cream)}
+  .o-logo span{color:var(--copper)}
+  .o-back{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:none;transition:color .3s}
+  .o-back:hover{color:var(--cream)}
+
+  .o-body{max-width:1120px;margin:0 auto;padding:64px 60px 80px}
+  .o-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--copper);margin-bottom:16px}
+  .o-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,6vw,80px);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;color:var(--cream);margin-bottom:64px}
+
+  .o-layout{display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:start}
+  .o-left{display:flex;flex-direction:column;gap:40px}
+  .o-section-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--copper);margin-bottom:16px}
+
+  /* Product picker */
+  .o-products{display:flex;flex-direction:column;gap:2px}
+  .opi{background:var(--espresso);padding:18px 22px;display:flex;align-items:center;gap:16px;border:1px solid transparent;transition:border-color .3s;cursor:none}
+  .opi.selected{border-color:var(--copper)}
+  .opi:hover{border-color:rgba(180,83,9,.3)}
+  .opi-dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(244,237,227,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .3s}
+  .opi-dot.on{border-color:var(--copper)}
+  .opi-dot.on::after{content:'';width:7px;height:7px;background:var(--copper);border-radius:50%;display:block}
+  .opi-info{flex:1}
+  .opi-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.05em;color:var(--cream)}
+  .opi-sub{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .opi-price{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:var(--cream)}
+
+  /* Qty */
+  .qty-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(244,237,227,.03);border:1px solid rgba(244,237,227,.08);padding:16px 22px}
+  .qty-lbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .qty-ctrl{display:flex;align-items:center}
+  .qty-btn{width:40px;height:40px;background:none;border:1px solid rgba(244,237,227,.12);color:var(--cream);font-size:20px;cursor:none;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
+  .qty-btn:hover{background:var(--copper);border-color:var(--copper);color:var(--black)}
+  .qty-num{width:56px;height:40px;background:rgba(244,237,227,.04);border-top:1px solid rgba(244,237,227,.12);border-bottom:1px solid rgba(244,237,227,.12);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:14px;color:var(--cream)}
+
+  /* Fields */
+  .fields{display:flex;flex-direction:column;gap:14px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .fgrp{display:flex;flex-direction:column;gap:6px}
+  .flbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+  .finp{background:rgba(244,237,227,.04);border:1px solid rgba(244,237,227,.1);padding:14px 18px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--cream);outline:none;transition:border-color .3s;width:100%}
+  .finp::placeholder{color:var(--muted)}
+  .finp:focus{border-color:var(--copper)}
+
+  /* Summary */
+  .o-summary{background:var(--espresso);padding:36px;position:sticky;top:88px}
+  .sum-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.1em;color:var(--cream);padding-bottom:20px;border-bottom:1px solid rgba(244,237,227,.08);margin-bottom:24px}
+  .sum-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .sum-k{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .sum-v{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;color:var(--cream)}
+  .sum-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;padding-top:20px;border-top:1px solid rgba(244,237,227,.08)}
+  .sum-total-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.1em;color:var(--cream)}
+  .sum-total-amt{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:44px;color:var(--copper);letter-spacing:-.02em;line-height:1}
+
+  /* Pay button */
+  .pay-btn{width:100%;margin-top:28px;padding:19px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:.25em;text-transform:uppercase;background:var(--copper);color:var(--black);border:none;cursor:none;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background .3s,transform .2s;position:relative}
+  .pay-btn:hover:not(:disabled){background:var(--cream);transform:translateY(-2px)}
+  .pay-btn:disabled{background:var(--gray);color:var(--muted);cursor:not-allowed;transform:none}
+  .pay-btn .spinner{display:none;width:16px;height:16px;border:2px solid rgba(13,13,15,.3);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+  .pay-btn.loading .btn-text{display:none}
+  .pay-btn.loading .spinner{display:block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pay-secure{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:12px}
+
+  /* Info box */
+  .info-box{background:rgba(180,83,9,.06);border:1px solid rgba(180,83,9,.2);padding:16px 18px;margin-top:20px}
+  .info-box-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--copper);margin-bottom:8px}
+  .info-box-body{font-size:12px;line-height:1.6;color:rgba(244,237,227,.5);font-weight:300}
+
+  /* SUCCESS */
+  .o-success{display:none;text-align:center;padding:80px 40px}
+  .o-success.show{display:block}
+  .suc-icon{font-size:56px;margin-bottom:28px}
+  .suc-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:64px;text-transform:uppercase;letter-spacing:-.02em;color:var(--cream);margin-bottom:12px}
+  .suc-sub{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-bottom:28px}
+  .suc-body{font-size:15px;line-height:1.8;color:rgba(244,237,227,.45);max-width:420px;margin:0 auto 40px}
+  .suc-pid{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:32px}
+  .suc-back{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--black);background:var(--copper);padding:16px 48px;border:none;cursor:none;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background .3s}
+  .suc-back:hover{background:var(--cream)}
+
+  /* Mobile */
+  @media(max-width:900px){
+    nav,.o-nav{padding:20px 24px}
+    .nav-links{display:none}
+    section,.o-body{padding:72px 24px}
+    .hero-content{padding:0 24px}
+    .hero-clock,.hero-scroll{display:none}
+    .man-grid,.asm-inner{grid-template-columns:1fr;gap:48px}
+    .prod-grid{grid-template-columns:1fr}
+    .stats-grid{grid-template-columns:repeat(2,1fr);gap:32px}
+    .stat-item{padding:0 16px}
+    .ft-top{flex-direction:column;gap:40px}
+    .ft-bottom{flex-direction:column;gap:16px}
+    .o-layout{grid-template-columns:1fr}
+    .o-summary{position:static}
+    .field-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="toast" id="toast">—</div>
+
+<!-- ════════════ MAIN SITE ════════════ -->
+<div id="main-site">
+
+<nav>
+  <a href="#" class="nav-logo">5<span>.</span>A<span>.</span>M<span>.</span> Assembly</a>
+  <ul class="nav-links">
+    <li><a href="#products">Roasts</a></li>
+    <li><a href="#assembly">Assembly</a></li>
+    <li><a href="#philosophy">Manifesto</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="openOrder(event)">Order Now</a>
+</nav>
+
+<section id="hero">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. 4:47 A.M. — Grinding Culture. Brewing Momentum.</p>
+    <h1 class="hero-headline">5 A.M.<br><span class="dim">is not</span><br>a time.</h1>
+    <p class="hero-sub">It's a decision. Made before the world logs in. Built for minds that don't idle.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-copper" onclick="openOrder(event)">Enter the Assembly</a>
+      <a href="#philosophy" class="btn-ghost">Read the Manifesto</a>
+    </div>
+  </div>
+  <div class="hero-clock" id="liveClock">--:--:--</div>
+  <div class="hero-scroll"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+
+<section id="manifesto">
+  <div class="man-grid">
+    <div class="man-text reveal">We don't<br><span class="acc">romanticize</span><br><span class="dim">mornings.</span><br>We<br>weaponize<br><span class="dim">them.</span></div>
+    <div class="man-items reveal">
+      <div class="man-item"><span class="man-num">01</span><p class="man-stmt"><strong>This roast is not polite.</strong> It was built for people who ship before sunrise.</p></div>
+      <div class="man-item"><span class="man-num">02</span><p class="man-stmt"><strong>Momentum is earned in silence.</strong> Not announced. Not performed. Executed.</p></div>
+      <div class="man-item"><span class="man-num">03</span><p class="man-stmt"><strong>Built for minds that don't idle.</strong> Comfort is optional. Output is not.</p></div>
+      <div class="man-item"><span class="man-num">04</span><p class="man-stmt"><strong>Taste matters.</strong> Precision matters more. We design coffee like software builds.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="prod-header">
+    <div>
+      <p class="sec-label reveal">Current Roster</p>
+      <h2 class="sec-title reveal">The<br>Roast<br>Units.</h2>
+    </div>
+    <p style="font-size:14px;color:var(--muted);max-width:260px;font-weight:300;line-height:1.7" class="reveal">Each blend engineered for a specific output state. Choose your weapon.</p>
+  </div>
+  <div class="prod-grid">
+
+    <div class="pcard reveal">
+      <div class="p-badge">Precision Roast</div>
+      <div class="p-name">Arabicana</div>
+      <div class="p-sub">Single Origin Arabica — Medium Dark</div>
+      <p class="p-desc">Layered. Complex. Uncompromising. Deep fruit notes cutting through dark chocolate. For when clarity matters more than comfort.</p>
+      <div class="p-energy"><div class="e-label">Energy Curve — Moderate → Sustained</div><div class="e-bar"><div class="e-fill" style="width:62%"></div></div></div>
+      <div class="p-meta">
+        <div class="m-item"><span class="m-key">Grind</span><span class="m-val">Medium Fine</span></div>
+        <div class="m-item"><span class="m-key">Best For</span><span class="m-val">Deep Work</span></div>
+        <div class="m-item"><span class="m-key">Acidity</span><span class="m-val">Low–Med</span></div>
+      </div>
+      <div class="p-bottom">
+        <div class="p-price-block"><div class="p-price">₹2,800</div><div class="p-weight">250g / 8.8oz</div></div>
+        <button class="p-add" onclick="quickOrder('Arabicana',2800)">+ Add to Order</button>
+      </div>
+    </div>
+
+    <div class="pcard reveal">
+      <div class="p-badge">High Caffeine</div>
+      <div class="p-name">Midnight<br>Static</div>
+      <div class="p-sub">Dark Roast Blend — High Intensity</div>
+      <p class="p-desc">Maximum extraction. Aggressive profile. For 2AM code sprints and problems that don't sleep.</p>
+      <div class="p-energy"><div class="e-label">Energy Curve — Aggressive → Peak</div><div class="e-bar"><div class="e-fill" style="width:95%"></div></div></div>
+      <div class="p-meta">
+        <div class="m-item"><span class="m-key">Grind</span><span class="m-val">Coarse</span></div>
+        <div class="m-item"><span class="m-key">Best For</span><span class="m-val">Code Sprint</span></div>
+        <div class="m-item"><span class="m-key">Acidity</span><span class="m-val">Very Low</span></div>
+      </div>
+      <div class="p-bottom">
+        <div class="p-price-block"><div class="p-price">₹3,200</div><div class="p-weight">250g / 8.8oz</div></div>
+        <button class="p-add" onclick="quickOrder('Midnight Static',3200)">+ Add to Order</button>
+      </div>
+    </div>
+
+    <div class="pcard reveal">
+      <div class="p-badge">Low Acidity</div>
+      <div class="p-name">Copper<br>Silence</div>
+      <div class="p-sub">Washed Process — Smooth Dark</div>
+      <p class="p-desc">Smooth, low-acid profile with warm caramel structure. For focused work that demands hours, not minutes.</p>
+      <div class="p-energy"><div class="e-label">Energy Curve — Calm → Focused</div><div class="e-bar"><div class="e-fill" style="width:45%;background:linear-gradient(to right,#B45309,#7A3A00)"></div></div></div>
+      <div class="p-meta">
+        <div class="m-item"><span class="m-key">Grind</span><span class="m-val">Medium</span></div>
+        <div class="m-item"><span class="m-key">Best For</span><span class="m-val">Long Sessions</span></div>
+        <div class="m-item"><span class="m-key">Acidity</span><span class="m-val">Minimal</span></div>
+      </div>
+      <div class="p-bottom">
+        <div class="p-price-block"><div class="p-price">₹2,600</div><div class="p-weight">250g / 8.8oz</div></div>
+        <button class="p-add" onclick="quickOrder('Copper Silence',2600)">+ Add to Order</button>
+      </div>
+    </div>
+
+    <div class="pcard reveal">
+      <div class="p-badge">Smooth Dark Blend</div>
+      <div class="p-name">Weekend<br>Light</div>
+      <div class="p-sub">Blend — Light-Medium Roast</div>
+      <p class="p-desc">Recovery is strategy. Bright, clean, approachable — without softness. For the day after the deadline.</p>
+      <div class="p-energy"><div class="e-label">Energy Curve — Mild → Balanced</div><div class="e-bar"><div class="e-fill" style="width:38%;background:linear-gradient(to right,#5B8CB7,#1F3C88)"></div></div></div>
+      <div class="p-meta">
+        <div class="m-item"><span class="m-key">Grind</span><span class="m-val">Fine</span></div>
+        <div class="m-item"><span class="m-key">Best For</span><span class="m-val">Recovery Day</span></div>
+        <div class="m-item"><span class="m-key">Acidity</span><span class="m-val">Medium</span></div>
+      </div>
+      <div class="p-bottom">
+        <div class="p-price-block"><div class="p-price">₹2,400</div><div class="p-weight">250g / 8.8oz</div></div>
+        <button class="p-add" onclick="quickOrder('Weekend Light',2400)">+ Add to Order</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-item reveal"><div class="stat-num">5<span style="font-size:36px">AM</span></div><div class="stat-lbl">Assembly Hour</div></div>
+    <div class="stat-item reveal"><div class="stat-num">100<span style="font-size:36px">%</span></div><div class="stat-lbl">Arabica Sourced</div></div>
+    <div class="stat-item reveal"><div class="stat-num">4</div><div class="stat-lbl">Roast Architectures</div></div>
+    <div class="stat-item reveal"><div class="stat-num">0</div><div class="stat-lbl">Excuses Brewed</div></div>
+  </div>
+</div>
+
+<section id="dark-energy">
+  <canvas class="de-canvas" id="deCanvas"></canvas>
+  <div class="de-content">
+    <p class="de-label">// Dark Energy Protocol</p>
+    <h2 class="de-title">Fuel From<br>Discomfort.</h2>
+    <p class="de-body">Dark Energy is not a product. It's a state. Late nights. Hard problems. High stakes. When pressure becomes the point.</p>
+  </div>
+</section>
+
+<section id="philosophy">
+  <div class="phil-inner">
+    <p class="sec-label reveal" style="text-align:center">The Philosophy</p>
+    <blockquote class="phil-quote reveal">"We grind <em>culture</em>,<br>not beans."</blockquote>
+    <p class="phil-body reveal">5 A.M. Assembly is for builders who operate before the world logs in. Momentum earned in silence. Taste that matters. Comfort optional.</p>
+    <div class="phil-line reveal"></div>
+  </div>
+</section>
+
+<section id="assembly">
+  <div class="asm-inner">
+    <div>
+      <p class="sec-label reveal">Assembly Access</p>
+      <h2 class="asm-title reveal">Join the<br>Assembly.</h2>
+      <p class="asm-body reveal">Early access. Exclusive roast drops. Culture dispatches before 6 A.M. No noise. Just signal.</p>
+      <div class="email-form reveal">
+        <input type="email" class="email-in" id="emailIn" placeholder="your@email.com">
+        <button class="email-btn" onclick="joinAssembly()">Enlist</button>
+      </div>
+    </div>
+    <div class="asm-perks reveal">
+      <div class="perk"><div class="perk-icon">⌬</div><div><div class="perk-title">First Access</div><div class="perk-desc">New roast units before public drop. No waitlist.</div></div></div>
+      <div class="perk"><div class="perk-icon">◈</div><div><div class="perk-title">Culture Hub</div><div class="perk-desc">QR-linked community. Builders who start before sunrise.</div></div></div>
+      <div class="perk"><div class="perk-icon">◆</div><div><div class="perk-title">Dark Energy Drops</div><div class="perk-desc">Limited seasonal blends. High-intensity. Assembly only.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-top">
+    <div><div class="ft-logo">5<span>.</span>A<span>.</span>M.</div><div class="ft-tag">Grinding Culture.<br>Brewing Momentum.<br><br>Built for minds that don't idle.</div></div>
+    <div><div class="ft-col-title">Roasts</div><ul class="ft-links"><li><a href="#">Arabicana</a></li><li><a href="#">Midnight Static</a></li><li><a href="#">Copper Silence</a></li><li><a href="#">Weekend Light</a></li></ul></div>
+    <div><div class="ft-col-title">Assembly</div><ul class="ft-links"><li><a href="#">Manifesto</a></li><li><a href="#">Assembly Access</a></li><li><a href="#">Dark Energy</a></li></ul></div>
+    <div><div class="ft-col-title">Contact</div><ul class="ft-links"><li><a href="#">hello@5amassembly.com</a></li><li><a href="#">Wholesale</a></li><li><a href="#">Press Kit</a></li></ul></div>
+  </div>
+  <div class="ft-bottom">
+    <p class="ft-copy">© 2025 5 A.M. Assembly. All Rights Reserved.</p>
+    <div class="ft-signal"><div class="sig-dot"></div>Assembly is live</div>
+  </div>
+</footer>
+
+</div><!-- end #main-site -->
+
+
+<!-- ════════════ ORDER PAGE ════════════ -->
+<div id="order-page">
+
+  <nav class="o-nav">
+    <div class="o-logo">5<span>.</span>A<span>.</span>M<span>.</span> Assembly</div>
+    <button class="o-back" onclick="closeOrder()">← Back</button>
+  </nav>
+
+  <div class="o-body">
+
+    <!-- SUCCESS STATE -->
+    <div class="o-success" id="oSuccess">
+      <div class="suc-icon">◆</div>
+      <div class="suc-title">Order<br>Confirmed.</div>
+      <div class="suc-sub">// You're in the Assembly</div>
+      <p class="suc-body">Payment verified. Your roast ships within 2 business days. Grind culture. Ship before sunrise.</p>
+      <p class="suc-pid" id="sucPayId"></p>
+      <button class="suc-back" onclick="closeOrder()">Back to Assembly</button>
+    </div>
+
+    <!-- ORDER FORM -->
+    <div id="oForm">
+      <div class="o-eyebrow">// Secure Checkout — Powered by Razorpay</div>
+      <div class="o-title">Your Order.</div>
+
+      <div class="o-layout">
+
+        <!-- LEFT -->
+        <div class="o-left">
+
+          <div>
+            <div class="o-section-head">01 — Select Roast Unit</div>
+            <div class="o-products">
+              <div class="opi selected" onclick="selectOpi(this,'Arabicana',2800)">
+                <div class="opi-dot on"></div>
+                <div class="opi-info"><div class="opi-name">Arabicana</div><div class="opi-sub">Precision Roast · Medium Dark</div></div>
+                <div class="opi-price">₹2,800</div>
+              </div>
+              <div class="opi" onclick="selectOpi(this,'Midnight Static',3200)">
+                <div class="opi-dot"></div>
+                <div class="opi-info"><div class="opi-name">Midnight Static</div><div class="opi-sub">High Caffeine · Dark Roast</div></div>
+                <div class="opi-price">₹3,200</div>
+              </div>
+              <div class="opi" onclick="selectOpi(this,'Copper Silence',2600)">
+                <div class="opi-dot"></div>
+                <div class="opi-info"><div class="opi-name">Copper Silence</div><div class="opi-sub">Low Acidity · Smooth Dark</div></div>
+                <div class="opi-price">₹2,600</div>
+              </div>
+              <div class="opi" onclick="selectOpi(this,'Weekend Light',2400)">
+                <div class="opi-dot"></div>
+                <div class="opi-info"><div class="opi-name">Weekend Light</div><div class="opi-sub">Smooth Dark Blend · Light-Med</div></div>
+                <div class="opi-price">₹2,400</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="o-section-head">02 — Quantity</div>
+            <div class="qty-bar">
+              <div class="qty-lbl">Units (250g bags)</div>
+              <div class="qty-ctrl">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <div class="qty-num" id="qtyNum">1</div>
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="o-section-head">03 — Delivery Details</div>
+            <div class="fields">
+              <div class="field-row">
+                <div class="fgrp"><label class="flbl">Full Name</label><input type="text" class="finp" id="fName" placeholder="Your name"></div>
+                <div class="fgrp"><label class="flbl">Phone</label><input type="tel" class="finp" id="fPhone" placeholder="+91 98765 43210"></div>
+              </div>
+              <div class="fgrp"><label class="flbl">Email</label><input type="email" class="finp" id="fEmail" placeholder="you@domain.com"></div>
+              <div class="fgrp"><label class="flbl">Delivery Address</label><input type="text" class="finp" id="fAddress" placeholder="Street, City, PIN Code"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Summary + Pay -->
+        <div class="o-summary">
+          <div class="sum-title">Order Summary</div>
+          <div class="sum-line"><span class="sum-k">Roast</span><span class="sum-v" id="sProduct">Arabicana</span></div>
+          <div class="sum-line"><span class="sum-k">Quantity</span><span class="sum-v" id="sQty">1 × 250g</span></div>
+          <div class="sum-line"><span class="sum-k">Unit Price</span><span class="sum-v" id="sUnit">₹2,800</span></div>
+          <div class="sum-line"><span class="sum-k">Shipping</span><span class="sum-v">Free</span></div>
+          <div class="sum-total">
+            <span class="sum-total-lbl">Total</span>
+            <span class="sum-total-amt" id="sTotal">₹2,800</span>
+          </div>
+
+          <!-- How payment works -->
+          <div class="info-box">
+            <div class="info-box-head">// Payment Flow</div>
+            <div class="info-box-body">
+              Clicking Pay creates a secure Razorpay order server-side, then opens the Razorpay checkout. Pay via UPI, card, or netbanking. Signature is verified server-side before confirming your order.
+            </div>
+          </div>
+
+          <button class="pay-btn" id="payBtn" onclick="startPayment()">
+            <span class="btn-text">Pay &amp; Confirm Order</span>
+            <div class="spinner"></div>
+          </button>
+          <div class="pay-secure">🔒 Verified by Razorpay · SHA-256 Signed</div>
+        </div>
+
+      </div>
+    </div><!-- end #oForm -->
+
+  </div>
+</div><!-- end #order-page -->
+
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   CONFIG  —  Set this to wherever your FastAPI server runs
+   ════════════════════════════════════════════════════════════ */
+const API_BASE = 'http://localhost:8000';   // change to your deployed URL in production
+/* ════════════════════════════════════════════════════════════ */
+
+// App state
+let state = { product: 'Arabicana', price: 2800, qty: 1 };
+
+// ── Cursor ──────────────────────────────────────────────────
+const cur  = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cur.style.left  = ring.style.left  = e.clientX + 'px';
+  cur.style.top   = ring.style.top   = e.clientY + 'px';
+});
+
+// ── Clock ───────────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('liveClock').textContent =
+    [n.getHours(), n.getMinutes(), n.getSeconds()]
+      .map(v => String(v).padStart(2,'0')).join(':');
+}
+setInterval(tick, 1000); tick();
+
+// ── Hero Canvas ─────────────────────────────────────────────
+const hc = document.getElementById('heroCanvas'), hx = hc.getContext('2d');
+let hW, hH, hT = 0;
+function resH() { hW = hc.width = hc.offsetWidth; hH = hc.height = hc.offsetHeight; }
+resH(); window.addEventListener('resize', resH);
+(function animH() {
+  hT += 0.003; hx.fillStyle='#0D0D0F'; hx.fillRect(0,0,hW,hH);
+  [{x:hW*.7+Math.sin(hT)*hW*.08,y:hH*.4+Math.cos(hT*.7)*hH*.1,r:hW*.35,c:'42,30,23'},
+   {x:hW*.85+Math.cos(hT*.8)*hW*.06,y:hH*.6+Math.sin(hT)*hH*.08,r:hW*.28,c:'31,60,136'},
+   {x:hW*.6+Math.sin(hT*1.2)*hW*.05,y:hH*.75+Math.cos(hT*.6)*hH*.06,r:hW*.22,c:'139,26,26'}
+  ].forEach(b=>{
+    const g=hx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+    g.addColorStop(0,`rgba(${b.c},.25)`); g.addColorStop(1,'rgba(0,0,0,0)');
+    hx.fillStyle=g; hx.beginPath(); hx.arc(b.x,b.y,b.r,0,Math.PI*2); hx.fill();
+  });
+  const cg=hx.createLinearGradient(0,0,hW*.55,hH);
+  cg.addColorStop(0,'rgba(13,13,15,.92)'); cg.addColorStop(1,'rgba(13,13,15,0)');
+  hx.fillStyle=cg; hx.fillRect(0,0,hW,hH);
+  requestAnimationFrame(animH);
+})();
+
+// ── Dark Energy Canvas ──────────────────────────────────────
+const dc = document.getElementById('deCanvas'), dx = dc.getContext('2d');
+let dW, dH, dT = 0;
+function resD() { dW = dc.width = dc.offsetWidth; dH = dc.height = dc.offsetHeight; }
+resD(); window.addEventListener('resize', resD);
+(function animD() {
+  dT += 0.004; dx.fillStyle='#0D0D0F'; dx.fillRect(0,0,dW,dH);
+  [{x:dW*.8+Math.sin(dT)*dW*.1,y:dH*.5,r:dW*.4,c:'139,26,26'},
+   {x:dW*.65,y:dH*.3+Math.cos(dT)*dH*.15,r:dW*.3,c:'31,60,136'}
+  ].forEach(b=>{
+    const g=dx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+    g.addColorStop(0,`rgba(${b.c},.2)`); g.addColorStop(1,'rgba(0,0,0,0)');
+    dx.fillStyle=g; dx.beginPath(); dx.arc(b.x,b.y,b.r,0,Math.PI*2); dx.fill();
+  });
+  const lg=dx.createLinearGradient(0,0,dW*.5,0);
+  lg.addColorStop(0,'rgba(13,13,15,.98)'); lg.addColorStop(1,'rgba(13,13,15,0)');
+  dx.fillStyle=lg; dx.fillRect(0,0,dW,dH);
+  requestAnimationFrame(animD);
+})();
+
+// ── Scroll Reveal ───────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const i = Array.from(e.target.parentElement.children).indexOf(e.target);
+    setTimeout(() => e.target.classList.add('visible'), i * 80);
+    obs.unobserve(e.target);
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+// ── Toast ───────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('err', isErr);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Open / Close Order Page ─────────────────────────────────
+function openOrder(e) {
+  if (e) e.preventDefault();
+  document.getElementById('order-page').classList.add('active');
+  document.getElementById('order-page').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  updateSummary();
+}
+function closeOrder() {
+  document.getElementById('order-page').classList.remove('active');
+  document.body.style.overflow = '';
+  // Reset for next visit
+  document.getElementById('oSuccess').classList.remove('show');
+  document.getElementById('oForm').style.display = '';
+  setPayBtn(false);
+}
+
+// ── Quick Order from product card ───────────────────────────
+function quickOrder(name, price) {
+  state.product = name; state.price = price; state.qty = 1;
+  syncRadios();
+  document.getElementById('qtyNum').textContent = 1;
+  toast(`${name} — added`);
+  setTimeout(() => openOrder(null), 300);
+}
+
+// ── Product Radio ───────────────────────────────────────────
+function selectOpi(el, name, price) {
+  document.querySelectorAll('.opi').forEach(i => {
+    i.classList.remove('selected');
+    i.querySelector('.opi-dot').classList.remove('on');
+  });
+  el.classList.add('selected');
+  el.querySelector('.opi-dot').classList.add('on');
+  state.product = name; state.price = price;
+  updateSummary();
+}
+function syncRadios() {
+  const names = ['Arabicana','Midnight Static','Copper Silence','Weekend Light'];
+  document.querySelectorAll('.opi').forEach((el,i) => {
+    const match = names[i] === state.product;
+    el.classList.toggle('selected', match);
+    el.querySelector('.opi-dot').classList.toggle('on', match);
+  });
+}
+
+// ── Quantity ────────────────────────────────────────────────
+function changeQty(d) {
+  state.qty = Math.max(1, Math.min(20, state.qty + d));
+  document.getElementById('qtyNum').textContent = state.qty;
+  updateSummary();
+}
+
+// ── Summary ─────────────────────────────────────────────────
+function updateSummary() {
+  const total = state.price * state.qty;
+  document.getElementById('sProduct').textContent = state.product;
+  document.getElementById('sQty').textContent     = `${state.qty} × 250g`;
+  document.getElementById('sUnit').textContent    = `₹${state.price.toLocaleString('en-IN')}`;
+  document.getElementById('sTotal').textContent   = `₹${total.toLocaleString('en-IN')}`;
+}
+
+// ── Pay button state ────────────────────────────────────────
+function setPayBtn(loading) {
+  const btn = document.getElementById('payBtn');
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+}
+
+// ── Validate ────────────────────────────────────────────────
+function validate() {
+  const name    = document.getElementById('fName').value.trim();
+  const phone   = document.getElementById('fPhone').value.trim();
+  const email   = document.getElementById('fEmail').value.trim();
+  const address = document.getElementById('fAddress').value.trim();
+  if (!name)    { toast('Enter your name', true);            return null; }
+  if (!phone)   { toast('Enter phone number', true);         return null; }
+  if (!email || !email.includes('@')) { toast('Enter valid email', true); return null; }
+  if (!address) { toast('Enter delivery address', true);     return null; }
+  return { name, phone, email, address };
+}
+
+// ── STEP 1: Create Razorpay order server-side ────────────────
+async function startPayment() {
+  const fields = validate();
+  if (!fields) return;
+
+  setPayBtn(true);
+
+  const amount_paise = state.price * state.qty * 100;
+
+  let orderData;
+  try {
+    const res = await fetch(`${API_BASE}/api/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product:          state.product,
+        qty:              state.qty,
+        amount_paise:     amount_paise,
+        customer_name:    fields.name,
+        customer_email:   fields.email,
+        customer_phone:   fields.phone,
+        delivery_address: fields.address,
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Order creation failed');
+    }
+    orderData = await res.json();
+  } catch (err) {
+    toast(`❌ ${err.message}`, true);
+    setPayBtn(false);
+    return;
+  }
+
+  // ── STEP 2: Open Razorpay Checkout with the server order_id ──
+  const options = {
+    key:         orderData.key_id,
+    amount:      orderData.amount_paise,
+    currency:    'INR',
+    name:        '5 A.M. Assembly',
+    description: `${state.product} × ${state.qty} bag(s)`,
+    order_id:    orderData.order_id,      // ← the Razorpay order_id from server
+    prefill: {
+      name:    fields.name,
+      email:   fields.email,
+      contact: fields.phone,
+    },
+    theme: { color: '#B45309' },
+
+    // ── STEP 3: Handler function — called on payment success ──
+    handler: async function(response) {
+      // response contains: razorpay_payment_id, razorpay_order_id, razorpay_signature
+      await verifyPayment(response);
+    },
+
+    modal: {
+      ondismiss: function() {
+        toast('Payment cancelled');
+        setPayBtn(false);
+      }
+    }
+  };
+
+  const rzp = new Razorpay(options);
+
+  rzp.on('payment.failed', function(resp) {
+    toast(`Payment failed: ${resp.error.description}`, true);
+    setPayBtn(false);
+  });
+
+  rzp.open();
+}
+
+// ── STEP 4: Verify signature server-side ─────────────────────
+async function verifyPayment(rzpResponse) {
+  try {
+    const res = await fetch(`${API_BASE}/api/verify-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        razorpay_order_id:   rzpResponse.razorpay_order_id,
+        razorpay_payment_id: rzpResponse.razorpay_payment_id,
+        razorpay_signature:  rzpResponse.razorpay_signature,
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Verification failed');
+    }
+
+    const data = await res.json();
+
+    // ✅ Payment verified — show success
+    document.getElementById('oForm').style.display = 'none';
+    document.getElementById('oSuccess').classList.add('show');
+    document.getElementById('sucPayId').textContent =
+      `Payment ID: ${rzpResponse.razorpay_payment_id}`;
+    document.getElementById('order-page').scrollTop = 0;
+
+  } catch (err) {
+    toast(`Verification error: ${err.message}`, true);
+    setPayBtn(false);
+  }
+}
+
+// ── Join Assembly ────────────────────────────────────────────
+function joinAssembly() {
+  const inp = document.getElementById('emailIn');
+  if (inp.value.trim()) {
+    inp.value = '';
+    inp.placeholder = "You're in the Assembly.";
+    toast('Welcome to the Assembly');
+    setTimeout(() => { inp.placeholder = 'your@email.com'; }, 3000);
+  }
+}
+</script>
+</body>
+</html>
